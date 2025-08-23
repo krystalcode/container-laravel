@@ -136,6 +136,7 @@ ADD php-application-xdebug.ini /usr/local/etc/php/conf.d/application-xdebug.ini
 # Bash extensions.
 COPY --from=debian /root/.bashrc /root/
 COPY --from=debian /root/.bashrc.d /root/.bashrc.d
+COPY .bashrc.d/artisan.sh /root/.bashrc.d/
 
 # `dotenv`.
 COPY --from=debian /usr/bin/dotenv /usr/bin/dotenv
