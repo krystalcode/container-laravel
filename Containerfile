@@ -108,6 +108,15 @@ RUN a2enmod expires headers rewrite && \
     # Create a user that should own the application files.
     groupadd -r application && useradd -r -g application application
 
+# Add command for running Composer from anywhere in the filesystem.
+ADD ./commands/c /usr/local/bin/c
+
+# Add command for running Artisan from anywhere in the filesystem.
+ADD ./commands/a /usr/local/bin/a
+
+# Add command for running another command multiple times.
+ADD ./commands/r /usr/local/bin/r
+
 # Add apache configuration file.
 # The only change compared to the default file is that it changes the document
 # root to be the /var/www/html/public folder as required by Laravel.
@@ -149,3 +158,4 @@ COPY --from=atuin /root/.bashrc.d/atuin-client.sh /root/.bashrc.d/
 
 # Just.
 COPY --from=just /usr/bin/just /usr/bin/
+ADD ./commands/j /usr/local/bin/j
