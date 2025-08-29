@@ -31,6 +31,7 @@ RUN apt-get update && \
     libfreetype6-dev \
     libonig-dev \
     libbrotli-dev \
+    libzip-dev \
     git \
     unzip \
     default-mysql-client \
@@ -50,7 +51,7 @@ RUN apt-get update && \
 RUN mkdir ${PHP_EXTENSION_MAKE_DIR} && \
     # Install commonly used/required PHP extensions.
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install mysqli pdo_mysql mbstring gd curl opcache bcmath pcntl intl && \
+    docker-php-ext-install mysqli pdo_mysql mbstring gd curl opcache bcmath pcntl intl zip && \
     # Install the PhpRedis extension required by the 'redis' module, used for
     # improved cache performance.
     printf "\n" | pecl install redis && \
