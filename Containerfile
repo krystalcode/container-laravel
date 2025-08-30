@@ -1,4 +1,4 @@
-ARG DEBIAN_VERSION="12"
+ARG DEBIAN_VERSION="13"
 ARG PHP_VERSION="8.4"
 
 FROM docker.io/krystalcode/d_debian:${DEBIAN_VERSION} as debian
