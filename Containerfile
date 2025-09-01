@@ -98,7 +98,8 @@ RUN mkdir ${PHP_EXTENSION_MAKE_DIR} && \
     printf '%s\n' 'extension=brotli.so'  >> /usr/local/etc/php/conf.d/brotli.ini && \
     rm -rf ${PHP_EXTENSION_MAKE_DIR}/php-ext-brotli && \
     # Clean up.
-    rm /tmp/pear -rf
+    rm -rf /tmp/pear && \
+    rm -rf ${PHP_EXTENSION_MAKE_DIR}
 
     # Enable 'mod_expires' and 'mod_headers' apache modules required by the
     # 'advagg' module for properly setting headers.
