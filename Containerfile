@@ -9,7 +9,7 @@ FROM docker.io/krystalcode/d_atuin:${DEBIAN_VERSION}-latest as atuin
 
 FROM docker.io/krystalcode/d_just:${DEBIAN_VERSION}-latest as just
 
-FROM docker.io/library/php:${PHP_VERSION}-apache
+FROM docker.io/library/php:${PHP_VERSION}-cli
 
 ENV PHP_EXTENSION_MAKE_DIR=/tmp/php-make
 
@@ -101,12 +101,8 @@ RUN mkdir ${PHP_EXTENSION_MAKE_DIR} && \
     rm -rf /tmp/pear && \
     rm -rf ${PHP_EXTENSION_MAKE_DIR}
 
-    # Enable 'mod_expires' and 'mod_headers' apache modules required by the
-    # 'advagg' module for properly setting headers.
-    # Enable 'mod_rewrite' apache module for URL rewriting.
-RUN a2enmod expires headers rewrite && \
     # Install 'composer'.
-    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer && \
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer && \
     # Create a user that should own the application files.
     groupadd -r application && useradd -r -g application application
 
@@ -119,21 +115,11 @@ ADD ./commands/a /usr/local/bin/a
 # Add command for running another command multiple times.
 ADD ./commands/r /usr/local/bin/r
 
-# Add apache configuration file.
-# The only change compared to the default file is that it changes the document
-# root to be the /var/www/html/public folder as required by Laravel.
-#
-# @I Include all .htaccess files when the server is starting
-#    type     : improvement
-#    priority : normal
-#    labels   : performance
-COPY apache2.conf /etc/apache2/sites-available/000-default.conf
-
 # PHP configuration.
-ADD php-application-errors.ini /usr/local/etc/php/conf.d/application-errors.ini
-ADD php-application-execution.ini /usr/local/etc/php/conf.d/application-execution.ini
-ADD php-application-uploads.ini /usr/local/etc/php/conf.d/application-uploads.ini
-ADD php-application-xdebug.ini /usr/local/etc/php/conf.d/application-xdebug.ini
+ADD php-application-errors.ini /etc/frankenphp/php.d/application-errors.ini
+ADD php-application-execution.ini /etc/frankenphp/php.d/application-execution.ini
+ADD php-application-uploads.ini /etc/frankenphp/php.d/application-uploads.ini
+ADD php-application-xdebug.ini /etc/frankenphp/php.d/application-xdebug.ini
 
 # Bash extensions.
 COPY --from=debian /root/.bashrc /root/
@@ -162,3 +148,6 @@ COPY --from=atuin /root/.bashrc.d/atuin-client.sh /root/.bashrc.d/
 # Just.
 COPY --from=just /usr/bin/just /usr/bin/
 ADD ./commands/j /usr/local/bin/j
+
+COPY ./entrypoint.sh /root
+ENTRYPOINT ["/root/entrypoint.sh"]
