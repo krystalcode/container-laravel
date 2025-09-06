@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Require strict variable naming: This prevents problems with mistyped variable
+# names or mistakes in this script.
+set -u
+
+if [ $# -eq 0 ]; then
+    action="all"
+else
+    action="$1"
+fi
+
+declare -A aliases
+aliases["all"]="caches+files"
+for alias in "${!aliases[@]}"; do
+    if [[ "${action}" == "$alias" ]]; then
+        action=${aliases[$alias]}
+        break
+    fi
+done
+
+IFS='+' read -ra TASKS <<< "$action"
+if [ ${#TASKS[*]} -gt '1' ]
+then
+    for task in "${TASKS[@]}"; do
+        $0 ${task} "${@:2}"
+    done
+    exit 0
+fi
+
+case "${action}" in
+    caches|files)
+        printf "[INFO] Resetting permission for the ${action}\n"
+        ;;
+
+    *)
+        printf "[ERROR] Unsupported task ${action}\n"
+        exit 1
+        ;;
+esac
+
+case "${action}" in
+    caches)
+        chown -R ${APP_APP_OS_USER}:${APP_PHP_OS_GROUP} ${APP_CACHE_DIR}
+        chmod -R g+w ${APP_CACHE_DIR}
+        find ${APP_CACHE_DIR} -type d -exec chmod 2775 {} \;
+        find ${APP_CACHE_DIR} -type f -exec chmod 644 {} \;
+        ;;
+
+    files)
+        chown -R ${APP_APP_OS_USER}:${APP_PHP_OS_GROUP} ${APP_STORAGE_DIR}
+        chmod -R g+w ${APP_STORAGE_DIR}
+        find ${APP_STORAGE_DIR} -type d -exec chmod 2775 {} \;
+        find ${APP_STORAGE_DIR} -type f -exec chmod 664 {} \;
+        ;;
+esac
