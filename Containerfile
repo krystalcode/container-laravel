@@ -115,6 +115,9 @@ ADD ./commands/c /usr/local/bin/c
 # Add command for running Artisan from anywhere in the filesystem.
 ADD ./commands/a /usr/local/bin/a
 
+# Add command for resetting project file permissions.
+ADD ./commands/p /usr/local/bin/p
+
 # Add command for running another command multiple times.
 ADD ./commands/r /usr/local/bin/r
 
