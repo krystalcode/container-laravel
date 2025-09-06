@@ -9,7 +9,7 @@ FROM docker.io/krystalcode/d_atuin:${DEBIAN_VERSION}-latest as atuin
 
 FROM docker.io/krystalcode/d_just:${DEBIAN_VERSION}-latest as just
 
-FROM docker.io/library/php:${PHP_VERSION}-apache
+FROM docker.io/library/php:${PHP_VERSION}-fpm
 
 ENV PHP_EXTENSION_MAKE_DIR=/tmp/php-make
 
@@ -118,16 +118,6 @@ ADD ./commands/a /usr/local/bin/a
 
 # Add command for running another command multiple times.
 ADD ./commands/r /usr/local/bin/r
-
-# Add apache configuration file.
-# The only change compared to the default file is that it changes the document
-# root to be the /var/www/html/public folder as required by Laravel.
-#
-# @I Include all .htaccess files when the server is starting
-#    type     : improvement
-#    priority : normal
-#    labels   : performance
-COPY apache2.conf /etc/apache2/sites-available/000-default.conf
 
 # PHP configuration.
 ADD php-application-errors.ini /usr/local/etc/php/conf.d/application-errors.ini
