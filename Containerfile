@@ -101,12 +101,8 @@ RUN mkdir ${PHP_EXTENSION_MAKE_DIR} && \
     rm -rf /tmp/pear && \
     rm -rf ${PHP_EXTENSION_MAKE_DIR}
 
-    # Enable 'mod_expires' and 'mod_headers' apache modules required by the
-    # 'advagg' module for properly setting headers.
-    # Enable 'mod_rewrite' apache module for URL rewriting.
-RUN a2enmod expires headers rewrite && \
     # Install 'composer'.
-    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer && \
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer && \
     # Create a user that should own the application files.
     groupadd -r application && useradd -r -g application application
 
